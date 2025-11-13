@@ -172,7 +172,7 @@
         ar: "أنت مهندس مطالبات خبير."
     };
 
-    // ==== IMPORTANT: gunakan model yang masih aktif ====
+    // Model yang masih aktif
     const GEMINI_MODEL = "gemini-2.5-flash";
 
     let L = "en";
@@ -260,8 +260,15 @@
         btn.disabled = true;
         document.getElementById("btnText").textContent = T[L].generating;
 
+        // ==== timeout 20 detik supaya tidak nyangkut ====
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+            controller.abort();
+        }, 20000);
+
         try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+            const url =
+                `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
             const body = {
                 contents: [
@@ -275,19 +282,23 @@
                 ]
             };
 
+            console.log("[AI Prompt Builder] Sending request to Gemini…", { model: GEMINI_MODEL });
+
             const res = await fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "x-goog-api-key": apiKey   // <-- pakai header, bukan ?key=
+                    "x-goog-api-key": apiKey
                 },
-                body: JSON.stringify(body)
+                body: JSON.stringify(body),
+                signal: controller.signal
             });
 
             const data = await res.json();
+            console.log("[AI Prompt Builder] Response:", data);
 
             if (!res.ok) {
-                const msg = data.error?.message || "API error";
+                const msg = data.error?.message || `HTTP ${res.status}`;
                 throw new Error(msg);
             }
 
@@ -302,9 +313,15 @@
             document.getElementById("output").textContent = text;
             document.getElementById("outputSection").style.display = "block";
         } catch (e) {
-            alert("❌ Error: " + e.message + "\n\nCheck your API key / model name.");
-            console.error(e);
+            if (e.name === "AbortError") {
+                alert("⏱️ Request terlalu lama / jaringan lambat.\nCoba lagi, atau cek koneksi & blokir kantor/VPN.");
+                console.error("[AI Prompt Builder] Timeout:", e);
+            } else {
+                alert("❌ Error: " + e.message + "\n\nCek kembali API key, quota, atau Network tab di DevTools.");
+                console.error("[AI Prompt Builder] Error:", e);
+            }
         } finally {
+            clearTimeout(timeoutId);
             btn.disabled = false;
             document.getElementById("btnText").textContent = T[L].generateButton;
         }
@@ -328,10 +345,11 @@
     updateLanguage();
     updateDisplay();
 
-    // Pertama kali buka & belum ada key → buka panel settings
     if (!localStorage.getItem("gak")) {
         document.getElementById("apiKeySection").style.display = "block";
     }
 </script>
+
 </body>
 </html>
+
