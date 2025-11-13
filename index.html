@@ -84,14 +84,16 @@
         <div class="mb-4">
             <label id="categoryLabel" class="block text-base font-semibold mb-2"></label>
             <select id="categorySelect"
-                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                <option value="general">General / Umum</option>
-                <option value="email">Email / Komunikasi</option>
-                <option value="coding">Coding / Programming</option>
-                <option value="marketing">Marketing / Copywriting</option>
-                <option value="translation">Terjemahan / Translation</option>
-                <option value="summary">Ringkasan / Summary</option>
-            </select>
+        class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+    <option value="general">General / Umum / 一般</option>
+    <option value="email">Email / Komunikasi / メール</option>
+    <option value="coding">Manufacturing / Pabrik / 製造</option>
+    <option value="hr">HR / HRD / 総務</option>
+    <option value="marketing">Marketing / Copywriting / マーケティング</option>
+    <option value="translation">Terjemahan / Translation / 翻訳</option>
+    <option value="summary">Ringkasan / Summary / 要約</option>
+</select>
+
         </div>
 
         <div class="mb-8">
@@ -215,11 +217,17 @@
             ja: "ユーザーのアイデアに基づいて、丁寧で分かりやすいメールを作成してください。",
             ar: "أنشئ رسالة بريد إلكتروني واضحة ومهذبة بناءً على فكرة المستخدم."
         },
-        coding: {
-            en: "Help the user with programming-related prompts and code explanations.",
-            id: "Bantu pengguna membuat prompt terkait pemrograman dan penjelasan kode.",
-            ja: "プログラミングに関するプロンプトやコードの説明を手助けしてください。",
-            ar: "ساعد المستخدم في المطالبات المتعلقة بالبرمجة وشرح الشيفرة."
+                coding: {
+            en: "Help the user with manufacturing-related prompts (production, quality control, factory documents).",
+            id: "Bantu pengguna membuat prompt terkait manufaktur: produksi, quality control, dan dokumen pabrik.",
+            ja: "生産・品質管理・工場文書など、製造業に関するプロンプト作成をサポートしてください。",
+            ar: "ساعد المستخدم في المطالبات المتعلقة بالتصنيع مثل الإنتاج وضبط الجودة ومستندات المصنع."
+        },
+ hr: {
+            en: "Support HR and general affairs tasks: recruitment, attendance, internal rules, evaluations, and training documents.",
+            id: "Bantu tugas HRD dan general affair: rekrutmen, absensi, peraturan internal, penilaian karyawan, dan dokumen pelatihan.",
+            ja: "採用、勤怠管理、社内規則、人事評価、研修資料など、人事・総務業務に関するプロンプトをサポートしてください。",
+            ar: "ساعد المستخدم في مهام الموارد البشرية والشؤون الإدارية مثل التوظيف والحضور واللوائح الداخلية وتقييمات الموظفين والوثائق التدريبية."
         },
         marketing: {
             en: "Write marketing or copywriting style prompts to promote products or services.",
@@ -443,3 +451,4 @@
 
 </body>
 </html>
+
