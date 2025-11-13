@@ -7,111 +7,331 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex-1"></div>
-                <div class="flex items-center gap-3">
-                    <!-- ✨ TOMBOL SETTINGS BARU -->
-                    <button onclick="toggleSettings()" id="settingsBtn" class="flex items-center gap-2 bg-white border rounded-lg px-3 py-2 hover:bg-gray-50">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <span id="settingsText">⚙️ Settings</span>
-                    </button>
-                    
-                    <select id="langSelect" class="bg-white border rounded-lg px-3 py-2">
-                        <option value="en">🇺🇸 English</option>
-                        <option value="ja">🇯🇵 日本語</option>
-                        <option value="id">🇮🇩 Bahasa Indonesia</option>
-                        <option value="ar">🇸🇦 العربية</option>
-                    </select>
-                </div>
-            </div>
-            <h1 id="title" class="text-5xl font-bold text-gray-800 mb-4"></h1>
-            <p id="subtitle" class="text-lg text-gray-600"></p>
-        </div>
-
-        <!-- API Key Settings -->
-        <div id="apiKeySection" class="bg-yellow-50 border-2 border-yellow-300 rounded-2xl p-6 mb-8">
-            <div class="flex justify-between items-start mb-3">
-                <h3 class="text-lg font-bold">⚙️ API Key Settings</h3>
-                <button onclick="toggleSettings()" class="text-gray-500 hover:text-gray-700">✕</button>
-            </div>
-            
-            <!-- Current API Key Display -->
-            <div id="currentKey" style="display:none;" class="mb-4 p-3 bg-white rounded-lg border">
-                <p class="text-xs text-gray-500 mb-2">Current API Key:</p>
-                <div class="flex items-center gap-2">
-                    <input type="password" id="displayKey" readonly class="flex-1 text-sm font-mono bg-transparent" />
-                    <button onclick="toggleShow()" class="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200">👁️ Show</button>
-                    <button onclick="deleteKey()" class="px-3 py-1 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200">🗑️ Delete</button>
-                </div>
-            </div>
-
-            <p class="text-sm mb-3">Get FREE API key from Google Gemini:</p>
-            <ol class="text-sm mb-4 list-decimal list-inside space-y-1">
-                <li>Open: <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-600 font-bold underline">Google AI Studio</a></li>
-                <li>Login & click "Create API Key"</li>
-                <li>Copy & paste below:</li>
-            </ol>
-            <div class="flex gap-2">
-                <input type="password" id="apiKeyInput" placeholder="Paste your API key here..." class="flex-1 px-4 py-2 border rounded-lg">
-                <button onclick="saveKey()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold">💾 Save</button>
-            </div>
-            <p class="text-xs text-gray-500 mt-2">✅ Stored locally in your browser (safe & private)</p>
-        </div>
-
-        <!-- Main Content -->
-        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-            <div class="mb-8">
-                <label id="inputLabel" class="block text-lg font-semibold mb-3"></label>
-                <textarea id="ideaInput" class="w-full h-32 p-4 border rounded-lg resize-none focus:ring-2 focus:ring-blue-500"></textarea>
-            </div>
-
-            <div class="text-center mb-8">
-                <button onclick="generate()" id="generateBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg text-lg disabled:bg-gray-400">
-                    <span id="btnText"></span>
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex-1"></div>
+            <div class="flex items-center gap-3">
+                <!-- Settings Button -->
+                <button onclick="toggleSettings()" id="settingsBtn"
+                        class="flex items-center gap-2 bg-white border rounded-lg px-3 py-2 hover:bg-gray-50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span id="settingsText">⚙️ Settings</span>
                 </button>
-            </div>
 
-            <div id="outputSection" style="display:none;">
-                <div class="flex justify-between mb-3">
-                    <label id="outputLabel" class="text-lg font-semibold"></label>
-                    <button onclick="copy()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
-                        <span id="copyText"></span>
-                    </button>
-                </div>
-                <div id="output" class="bg-gray-50 border rounded-lg p-4 min-h-[120px] whitespace-pre-wrap"></div>
+                <select id="langSelect" class="bg-white border rounded-lg px-3 py-2">
+                    <option value="en">🇺🇸 English</option>
+                    <option value="ja">🇯🇵 日本語</option>
+                    <option value="id">🇮🇩 Bahasa Indonesia</option>
+                    <option value="ar">🇸🇦 العربية</option>
+                </select>
             </div>
         </div>
-
-        <footer class="text-center text-gray-500"><span id="footer"></span></footer>
+        <h1 id="title" class="text-5xl font-bold text-gray-800 mb-4"></h1>
+        <p id="subtitle" class="text-lg text-gray-600"></p>
     </div>
 
-    <script>
-        const T={ja:{title:"AIプロンプトビルダー",subtitle:"あなたのアイデアを効果的なAIプロンプトに変換します",inputLabel:"アイデアを入力してください",inputPlaceholder:"ここにあなたのアイデアや要求を日本語で入力してください...",generateButton:"プロンプト生成",outputLabel:"生成されたプロンプト",copyButton:"コピー",copied:"コピーしました！",generating:"生成中...",footer:"Design by Wahyu"},en:{title:"AI Prompt Builder",subtitle:"Transform your ideas into effective AI prompts",inputLabel:"Enter your idea",inputPlaceholder:"Enter your idea here...",generateButton:"Generate Prompt",outputLabel:"Generated Prompt",copyButton:"Copy",copied:"Copied!",generating:"Generating...",footer:"Design by Wahyu"},id:{title:"Pembuat Prompt AI",subtitle:"Ubah ide Anda menjadi prompt AI yang efektif",inputLabel:"Masukkan ide Anda",inputPlaceholder:"Masukkan ide Anda...",generateButton:"Buat Prompt",outputLabel:"Prompt yang Dihasilkan",copyButton:"Salin",copied:"Tersalin!",generating:"Membuat...",footer:"Design by Wahyu"},ar:{title:"منشئ المطالبات للذكاء الاصطناعي",subtitle:"حول أفكارك إلى مطالبات فعالة للذكاء الاصطناعي",inputLabel:"أدخل فكرتك",inputPlaceholder:"أدخل فكرتك...",generateButton:"إنشاء المطالبة",outputLabel:"المطالبة المُنشأة",copyButton:"نسخ",copied:"تم النسخ!",generating:"جاري الإنشاء...",footer:"تصميم بواسطة وحيو"}};
-        const S={ja:"あなたは優秀なAIプロンプトエンジニアです。",en:"You are an expert AI prompt engineer.",id:"Anda adalah ahli prompt engineer.",ar:"أنت مهندس مطالبات خبير."};
-        let L='en',G=false;
-        
-        function U(){L=document.getElementById('langSelect').value;const t=T[L];document.getElementById('title').textContent=t.title;document.getElementById('subtitle').textContent=t.subtitle;document.getElementById('inputLabel').textContent=t.inputLabel;document.getElementById('ideaInput').placeholder=t.inputPlaceholder;document.getElementById('btnText').textContent=t.generateButton;document.getElementById('outputLabel').textContent=t.outputLabel;document.getElementById('copyText').textContent=t.copyButton;document.getElementById('footer').textContent=t.footer;document.getElementById('ideaInput').dir=L==='ar'?'rtl':'ltr';document.getElementById('output').dir=L==='ar'?'rtl':'ltr';}
-        
-        function toggleSettings(){const s=document.getElementById('apiKeySection');s.style.display=s.style.display==='none'?'block':'none';updateDisplay();}
-        
-        function updateDisplay(){const k=localStorage.getItem('gak');const d=document.getElementById('currentKey');const i=document.getElementById('displayKey');const st=document.getElementById('settingsText');if(k){d.style.display='block';i.value=k;st.textContent='✅ API Key';}else{d.style.display='none';st.textContent='⚠️ API Key';}}
-        
-        function toggleShow(){const i=document.getElementById('displayKey');i.type=i.type==='password'?'text':'password';}
-        
-        function deleteKey(){if(confirm('Delete API key?')){localStorage.removeItem('gak');document.getElementById('apiKeyInput').value='';updateDisplay();alert('✅ Deleted!');}}
-        
-        function saveKey(){const k=document.getElementById('apiKeyInput').value.trim();if(!k){alert('⚠️ Enter API key!');return;}localStorage.setItem('gak',k);document.getElementById('apiKeySection').style.display='none';alert('✅ Saved!');updateDisplay();}
-        
-        async function generate(){const i=document.getElementById('ideaInput').value.trim(),k=localStorage.getItem('gak');if(!k){alert('⚠️ Setup API key first!');document.getElementById('apiKeySection').style.display='block';return;}if(!i){alert('⚠️ Enter your idea!');return;}G=true;const b=document.getElementById('generateBtn');b.disabled=true;document.getElementById('btnText').textContent=T[L].generating;try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${k}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:S[L]+"\n\n"+i}]}]})});if(!r.ok)throw new Error('API error');const d=await r.json();document.getElementById('output').textContent=d.candidates[0].content.parts[0].text;document.getElementById('outputSection').style.display='block';}catch(e){alert('❌ Error: '+e.message+'\n\nCheck your API key!');}finally{G=false;b.disabled=false;document.getElementById('btnText').textContent=T[L].generateButton;}}
-        
-        async function copy(){try{await navigator.clipboard.writeText(document.getElementById('output').textContent);const b=document.getElementById('copyText'),o=b.textContent;b.textContent=T[L].copied;setTimeout(()=>b.textContent=o,2000);}catch(e){}}
-        
-        document.getElementById('langSelect').addEventListener('change',U);
-        U();updateDisplay();
-        if(!localStorage.getItem('gak'))document.getElementById('apiKeySection').style.display='block';
-    </script>
+    <!-- API Key Settings -->
+    <div id="apiKeySection" class="bg-yellow-50 border-2 border-yellow-300 rounded-2xl p-6 mb-8" style="display:none;">
+        <div class="flex justify-between items-start mb-3">
+            <h3 class="text-lg font-bold">⚙️ API Key Settings</h3>
+            <button onclick="toggleSettings()" class="text-gray-500 hover:text-gray-700">✕</button>
+        </div>
+
+        <!-- Current API Key Display -->
+        <div id="currentKey" style="display:none;" class="mb-4 p-3 bg-white rounded-lg border">
+            <p class="text-xs text-gray-500 mb-2">Current API Key:</p>
+            <div class="flex items-center gap-2">
+                <input type="password" id="displayKey" readonly
+                       class="flex-1 text-sm font-mono bg-transparent"/>
+                <button onclick="toggleShow()"
+                        class="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200">👁️ Show
+                </button>
+                <button onclick="deleteKey()"
+                        class="px-3 py-1 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200">🗑️ Delete
+                </button>
+            </div>
+        </div>
+
+        <p class="text-sm mb-3">Get FREE API key from Google Gemini:</p>
+        <ol class="text-sm mb-4 list-decimal list-inside space-y-1">
+            <li>Open:
+                <a href="https://aistudio.google.com/app/apikey" target="_blank"
+                   class="text-blue-600 font-bold underline">Google AI Studio</a>
+            </li>
+            <li>Login &amp; click "Create API Key"</li>
+            <li>Copy &amp; paste below:</li>
+        </ol>
+        <div class="flex gap-2">
+            <input type="password" id="apiKeyInput" placeholder="Paste your API key here..."
+                   class="flex-1 px-4 py-2 border rounded-lg">
+            <button onclick="saveKey()"
+                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold">💾 Save
+            </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">✅ Stored locally in your browser (safe &amp; private)</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+        <div class="mb-8">
+            <label id="inputLabel" class="block text-lg font-semibold mb-3"></label>
+            <textarea id="ideaInput"
+                      class="w-full h-32 p-4 border rounded-lg resize-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+
+        <div class="text-center mb-8">
+            <button onclick="generate()" id="generateBtn"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg text-lg disabled:bg-gray-400">
+                <span id="btnText"></span>
+            </button>
+        </div>
+
+        <div id="outputSection" style="display:none;">
+            <div class="flex justify-between mb-3">
+                <label id="outputLabel" class="text-lg font-semibold"></label>
+                <button onclick="copyOutput()"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                    <span id="copyText"></span>
+                </button>
+            </div>
+            <div id="output"
+                 class="bg-gray-50 border rounded-lg p-4 min-h-[120px] whitespace-pre-wrap"></div>
+        </div>
+    </div>
+
+    <footer class="text-center text-gray-500">
+        <span id="footer"></span>
+    </footer>
+</div>
+
+<script>
+    // ================== i18n Text ==================
+    const T = {
+        ja: {
+            title: "AIプロンプトビルダー",
+            subtitle: "あなたのアイデアを効果的なAIプロンプトに変換します",
+            inputLabel: "アイデアを入力してください",
+            inputPlaceholder: "ここにあなたのアイデアや要求を日本語で入力してください...",
+            generateButton: "プロンプト生成",
+            outputLabel: "生成されたプロンプト",
+            copyButton: "コピー",
+            copied: "コピーしました！",
+            generating: "生成中...",
+            footer: "Design by Wahyu"
+        },
+        en: {
+            title: "AI Prompt Builder",
+            subtitle: "Transform your ideas into effective AI prompts",
+            inputLabel: "Enter your idea",
+            inputPlaceholder: "Enter your idea here...",
+            generateButton: "Generate Prompt",
+            outputLabel: "Generated Prompt",
+            copyButton: "Copy",
+            copied: "Copied!",
+            generating: "Generating...",
+            footer: "Design by Wahyu"
+        },
+        id: {
+            title: "Pembuat Prompt AI",
+            subtitle: "Ubah ide Anda menjadi prompt AI yang efektif",
+            inputLabel: "Masukkan ide Anda",
+            inputPlaceholder: "Masukkan ide Anda...",
+            generateButton: "Buat Prompt",
+            outputLabel: "Prompt yang Dihasilkan",
+            copyButton: "Salin",
+            copied: "Tersalin!",
+            generating: "Membuat...",
+            footer: "Design by Wahyu"
+        },
+        ar: {
+            title: "منشئ المطالبات للذكاء الاصطناعي",
+            subtitle: "حوّل أفكارك إلى مطالبات فعالة للذكاء الاصطناعي",
+            inputLabel: "أدخل فكرتك",
+            inputPlaceholder: "أدخل فكرتك...",
+            generateButton: "إنشاء المطالبة",
+            outputLabel: "المطالبة المُنشأة",
+            copyButton: "نسخ",
+            copied: "تم النسخ!",
+            generating: "جاري الإنشاء...",
+            footer: "تصميم بواسطة وحيو"
+        }
+    };
+
+    // System prompt per language
+    const S = {
+        ja: "あなたは優秀なAIプロンプトエンジニアです。",
+        en: "You are an expert AI prompt engineer.",
+        id: "Anda adalah ahli prompt engineer.",
+        ar: "أنت مهندس مطالبات خبير."
+    };
+
+    // ==== IMPORTANT: gunakan model yang masih aktif ====
+    const GEMINI_MODEL = "gemini-2.5-flash";
+
+    let L = "en";
+
+    function updateLanguage() {
+        L = document.getElementById("langSelect").value;
+        const t = T[L];
+
+        document.getElementById("title").textContent = t.title;
+        document.getElementById("subtitle").textContent = t.subtitle;
+        document.getElementById("inputLabel").textContent = t.inputLabel;
+        document.getElementById("ideaInput").placeholder = t.inputPlaceholder;
+        document.getElementById("btnText").textContent = t.generateButton;
+        document.getElementById("outputLabel").textContent = t.outputLabel;
+        document.getElementById("copyText").textContent = t.copyButton;
+        document.getElementById("footer").textContent = t.footer;
+
+        document.getElementById("ideaInput").dir = L === "ar" ? "rtl" : "ltr";
+        document.getElementById("output").dir = L === "ar" ? "rtl" : "ltr";
+    }
+
+    function toggleSettings() {
+        const s = document.getElementById("apiKeySection");
+        s.style.display = (s.style.display === "none" || s.style.display === "") ? "block" : "none";
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        const k = localStorage.getItem("gak");
+        const d = document.getElementById("currentKey");
+        const i = document.getElementById("displayKey");
+        const st = document.getElementById("settingsText");
+
+        if (k) {
+            d.style.display = "block";
+            i.value = k;
+            st.textContent = "✅ API Key";
+        } else {
+            d.style.display = "none";
+            st.textContent = "⚠️ API Key";
+        }
+    }
+
+    function toggleShow() {
+        const i = document.getElementById("displayKey");
+        i.type = (i.type === "password") ? "text" : "password";
+    }
+
+    function deleteKey() {
+        if (confirm("Delete API key?")) {
+            localStorage.removeItem("gak");
+            document.getElementById("apiKeyInput").value = "";
+            updateDisplay();
+            alert("✅ Deleted!");
+        }
+    }
+
+    function saveKey() {
+        const k = document.getElementById("apiKeyInput").value.trim();
+        if (!k) {
+            alert("⚠️ Enter API key!");
+            return;
+        }
+        localStorage.setItem("gak", k);
+        document.getElementById("apiKeySection").style.display = "none";
+        alert("✅ Saved!");
+        updateDisplay();
+    }
+
+    async function generate() {
+        const idea = document.getElementById("ideaInput").value.trim();
+        const apiKey = localStorage.getItem("gak");
+
+        if (!apiKey) {
+            alert("⚠️ Setup API key first!");
+            document.getElementById("apiKeySection").style.display = "block";
+            return;
+        }
+        if (!idea) {
+            alert("⚠️ Enter your idea!");
+            return;
+        }
+
+        const btn = document.getElementById("generateBtn");
+        btn.disabled = true;
+        document.getElementById("btnText").textContent = T[L].generating;
+
+        try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+            const body = {
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text: S[L] + "\n\n" + idea
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": apiKey   // <-- pakai header, bukan ?key=
+                },
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                const msg = data.error?.message || "API error";
+                throw new Error(msg);
+            }
+
+            const candidate = data.candidates && data.candidates[0];
+            const parts = candidate?.content?.parts || [];
+            const text = parts.map(p => p.text || "").join("").trim();
+
+            if (!text) {
+                throw new Error("Empty response from model.");
+            }
+
+            document.getElementById("output").textContent = text;
+            document.getElementById("outputSection").style.display = "block";
+        } catch (e) {
+            alert("❌ Error: " + e.message + "\n\nCheck your API key / model name.");
+            console.error(e);
+        } finally {
+            btn.disabled = false;
+            document.getElementById("btnText").textContent = T[L].generateButton;
+        }
+    }
+
+    async function copyOutput() {
+        try {
+            const text = document.getElementById("output").textContent;
+            await navigator.clipboard.writeText(text);
+            const b = document.getElementById("copyText");
+            const old = b.textContent;
+            b.textContent = T[L].copied;
+            setTimeout(() => b.textContent = old, 2000);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // Init
+    document.getElementById("langSelect").addEventListener("change", updateLanguage);
+    updateLanguage();
+    updateDisplay();
+
+    // Pertama kali buka & belum ada key → buka panel settings
+    if (!localStorage.getItem("gak")) {
+        document.getElementById("apiKeySection").style.display = "block";
+    }
+</script>
 </body>
 </html>
