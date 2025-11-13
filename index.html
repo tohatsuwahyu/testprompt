@@ -80,16 +80,34 @@
 
     <!-- Main Content -->
     <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+        <!-- Prompt Category -->
+        <div class="mb-4">
+            <label id="categoryLabel" class="block text-base font-semibold mb-2"></label>
+            <select id="categorySelect"
+                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                <option value="general">General / Umum</option>
+                <option value="email">Email / Komunikasi</option>
+                <option value="coding">Coding / Programming</option>
+                <option value="marketing">Marketing / Copywriting</option>
+                <option value="translation">Terjemahan / Translation</option>
+                <option value="summary">Ringkasan / Summary</option>
+            </select>
+        </div>
+
         <div class="mb-8">
             <label id="inputLabel" class="block text-lg font-semibold mb-3"></label>
             <textarea id="ideaInput"
                       class="w-full h-32 p-4 border rounded-lg resize-none focus:ring-2 focus:ring-blue-500"></textarea>
         </div>
 
-        <div class="text-center mb-8">
+        <div class="flex flex-col md:flex-row justify-center items-center gap-3 text-center mb-8">
             <button onclick="generate()" id="generateBtn"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg text-lg disabled:bg-gray-400">
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg text-lg disabled:bg-gray-400 w-full md:w-auto">
                 <span id="btnText"></span>
+            </button>
+            <button onclick="clearAll()" id="clearBtn"
+                    class="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-8 rounded-lg text-base w-full md:w-auto">
+                <span id="clearText"></span>
             </button>
         </div>
 
@@ -124,7 +142,9 @@
             copyButton: "コピー",
             copied: "コピーしました！",
             generating: "生成中...",
-            footer: "Design by Wahyu"
+            footer: "Design by Wahyu",
+            categoryLabel: "プロンプトのカテゴリ（内容）",
+            clearButton: "クリア"
         },
         en: {
             title: "AI Prompt Builder",
@@ -136,7 +156,9 @@
             copyButton: "Copy",
             copied: "Copied!",
             generating: "Generating...",
-            footer: "Design by Wahyu"
+            footer: "Design by Wahyu",
+            categoryLabel: "Prompt category (what it's about)",
+            clearButton: "Clear"
         },
         id: {
             title: "Pembuat Prompt AI",
@@ -148,7 +170,9 @@
             copyButton: "Salin",
             copied: "Tersalin!",
             generating: "Membuat...",
-            footer: "Design by Wahyu"
+            footer: "Design by Wahyu",
+            categoryLabel: "Kategori prompt (tentang apa)",
+            clearButton: "Clear"
         },
         ar: {
             title: "منشئ المطالبات للذكاء الاصطناعي",
@@ -160,7 +184,9 @@
             copyButton: "نسخ",
             copied: "تم النسخ!",
             generating: "جاري الإنشاء...",
-            footer: "تصميم بواسطة وحيو"
+            footer: "تصميم بواسطة وحيو",
+            categoryLabel: "فئة الطلب (عن ماذا؟)",
+            clearButton: "مسح"
         }
     };
 
@@ -174,6 +200,46 @@
 
     // Model yang masih aktif
     const GEMINI_MODEL = "gemini-2.5-flash";
+
+    // Deskripsi kategori per bahasa (program / tentang apa)
+    const CATEGORY_HINTS = {
+        general: {
+            en: "General purpose prompt. Help structure and clarify the user's idea.",
+            id: "Prompt umum. Bantu menyusun dan memperjelas ide pengguna.",
+            ja: "汎用プロンプトです。ユーザーのアイデアを整理し、分かりやすくしてください。",
+            ar: "مطلب عام. ساعد في تنظيم وتوضيح فكرة المستخدم."
+        },
+        email: {
+            en: "Create a clear, polite email based on the user's idea.",
+            id: "Buat email yang jelas dan sopan berdasarkan ide pengguna.",
+            ja: "ユーザーのアイデアに基づいて、丁寧で分かりやすいメールを作成してください。",
+            ar: "أنشئ رسالة بريد إلكتروني واضحة ومهذبة بناءً على فكرة المستخدم."
+        },
+        coding: {
+            en: "Help the user with programming-related prompts and code explanations.",
+            id: "Bantu pengguna membuat prompt terkait pemrograman dan penjelasan kode.",
+            ja: "プログラミングに関するプロンプトやコードの説明を手助けしてください。",
+            ar: "ساعد المستخدم في المطالبات المتعلقة بالبرمجة وشرح الشيفرة."
+        },
+        marketing: {
+            en: "Write marketing or copywriting style prompts to promote products or services.",
+            id: "Tulis prompt bergaya marketing / copywriting untuk mempromosikan produk atau jasa.",
+            ja: "商品やサービスを宣伝するためのマーケティング／コピーライティング風のプロンプトを作成してください。",
+            ar: "اكتب مطالبات بأسلوب تسويقي أو كتابة إعلانية للترويج للمنتجات أو الخدمات."
+        },
+        translation: {
+            en: "Focus on translation, preserving meaning, tone, and important terminology.",
+            id: "Fokus pada terjemahan sambil menjaga makna, nada, dan istilah penting.",
+            ja: "翻訳に集中し、意味・トーン・重要な用語を維持してください。",
+            ar: "ركز على الترجمة مع الحفاظ على المعنى والنبرة والمصطلحات المهمة."
+        },
+        summary: {
+            en: "Summarize the content clearly and concisely for the user.",
+            id: "Ringkas isi secara jelas dan padat untuk pengguna.",
+            ja: "内容を分かりやすく簡潔に要約してください。",
+            ar: "لخّص المحتوى بوضوح واختصار للمستخدم."
+        }
+    };
 
     let L = "en";
 
@@ -189,6 +255,8 @@
         document.getElementById("outputLabel").textContent = t.outputLabel;
         document.getElementById("copyText").textContent = t.copyButton;
         document.getElementById("footer").textContent = t.footer;
+        document.getElementById("categoryLabel").textContent = t.categoryLabel;
+        document.getElementById("clearText").textContent = t.clearButton;
 
         document.getElementById("ideaInput").dir = L === "ar" ? "rtl" : "ltr";
         document.getElementById("output").dir = L === "ar" ? "rtl" : "ltr";
@@ -270,12 +338,22 @@
             const url =
                 `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
+            const selectedCategory = document.getElementById("categorySelect").value;
+            const categoryText =
+                CATEGORY_HINTS[selectedCategory]?.[L]
+                    ? "Category:\n" + CATEGORY_HINTS[selectedCategory][L] + "\n\n"
+                    : "";
+
             const body = {
                 contents: [
                     {
                         parts: [
                             {
-                                text: S[L] + "\n\n" + idea
+                                text:
+                                    S[L] +
+                                    "\n\n" +
+                                    categoryText +
+                                    idea
                             }
                         ]
                     }
@@ -340,6 +418,19 @@
         }
     }
 
+    function clearAll() {
+        // Bersihkan input ide
+        document.getElementById("ideaInput").value = "";
+
+        // Sembunyikan output
+        document.getElementById("output").textContent = "";
+        document.getElementById("outputSection").style.display = "none";
+
+        // Reset kategori ke default (opsional)
+        const cs = document.getElementById("categorySelect");
+        if (cs) cs.value = "general";
+    }
+
     // Init
     document.getElementById("langSelect").addEventListener("change", updateLanguage);
     updateLanguage();
@@ -352,4 +443,3 @@
 
 </body>
 </html>
-
